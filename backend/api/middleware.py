@@ -36,6 +36,14 @@ class RangesMiddleware(MiddlewareMixin):
         response["Content-Range"] = "bytes %d-%d/%d" % (start, end, statobj.st_size)
         return response
 
+class XFrameOptionsMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        response['X-Frame-Options'] = 'ALLOW-FROM https://www.example.com' # for our app? generated from ChatGPT
+        return response
 
 def to_django_header(header):
     return f"HTTP_{header.replace('-', '_').upper()}"
